@@ -11,6 +11,11 @@ class PhotosController < ApplicationController
 
   def index
     @photos = Photo.all
+    @location_hash = Gmaps4rails.build_markers(@photos.where.not(:address_tag_latitude => nil)) do |photo, marker|
+      marker.lat photo.address_tag_latitude
+      marker.lng photo.address_tag_longitude
+      marker.infowindow "<h5><a href='/photos/#{photo.id}'>#{photo.caption}</a></h5><small>#{photo.address_tag_formatted_address}</small>"
+    end
 
     render("photos/index.html.erb")
   end
